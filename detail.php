@@ -1,5 +1,13 @@
 <?php
-// Load the most recent posts from /data/posts.csv
+// Check if the 'id' parameter is provided in the URL
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    // Redirect to post.php if no ID is provided
+    header("Location: post.php");
+    exit();
+}
+
+// Load the post data from the CSV
+$post_id = $_GET['id'];
 $file_path = 'data/posts.csv';
 $posts = [];
 if (file_exists($file_path)) {
@@ -10,13 +18,52 @@ if (file_exists($file_path)) {
             $posts[] = $data; // Store each post
         }
         fclose($file);
+    } else {
+        // Redirect if the file cannot be opened
+        header("Location: post.php");
+        exit();
+    }
+} else {
+    // Redirect if the CSV file does not exist
+    header("Location: post.php");
+    exit();
+}
+
+// Find the post data by ID
+$post_data = null;
+foreach ($posts as $post) {
+    // Ensure that the post ID matches correctly
+    if (trim($post[0]) === $post_id) {
+        $post_data = $post;
+        break;
     }
 }
 
-// Reverse the posts array to get the most recent posts first
-$posts = array_reverse($posts);
-$recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
+// If post not found, redirect to post.php
+if (!$post_data) {
+    header("Location: post.php");
+    exit();
+}
 
+// Extract post details
+$user_handle = $post_data[1];
+$date = $post_data[2];
+$post_title = $post_data[3];
+
+// Load the blog content from the content.md file
+$content_file = "data/posts/$post_id/content.md";
+if (file_exists($content_file)) {
+    $post_content = file_get_contents($content_file);
+} else {
+    $post_content = "Content not available for this post.";
+}
+
+// Check if the post folder contains an image
+$image_path = "data/posts/$post_id/image.jpg"; // or other image types like .png, etc.
+if (!file_exists($image_path)) {
+    // If no image is found, use a default "no image" placeholder
+    $image_path = "assets/no-photo.jpg";
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +73,7 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Blog Home</title>
+        <title>Blog Post Detail</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
@@ -36,34 +83,6 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
         <!-- Custom styles for this template-->
         <link href="css/sb-admin-2.min.css" rel="stylesheet">
-        <style>
-            /* Add fading effect to text overflow */
-            .post-excerpt {
-                max-height: 4.5em;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                position: relative;
-                line-height: 1.5em;
-                height: 4.5em;
-            }
-            .post-excerpt::after {
-                content: '...';
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                padding: 0 5px;
-                background: white;
-            }
-
-            /* Ensure image retains aspect ratio of 700x350 */
-            .card-img-top {
-                width: 100%;
-                height: auto;
-                max-width: 700px;
-                max-height: 350px;
-                object-fit: cover; /* Ensures the image fills the space while maintaining aspect ratio */
-            }
-        </style>
     </head>
     <body>
         <!-- Page Wrapper -->
@@ -82,8 +101,7 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
                 <li class="nav-item active">
                     <a class="nav-link" href="post.php">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
+                        <span>Dashboard</span></a>
                 </li>
                 <!-- Divider -->
                 <hr class="sidebar-divider">
@@ -93,8 +111,7 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
                 <li class="nav-item">
                     <a class="nav-link" href="post.php">
                         <i class="fas fa-fw fa-table"></i>
-                        <span>View Posts</span>
-                    </a>
+                        <span>View Posts</span></a>
                 </li>
                 <!-- Divider -->
                 <hr class="sidebar-divider d-none d-md-block">
@@ -143,56 +160,22 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
 
                     <!-- Page content-->
                     <div class="container">
-                        <div class="row"></div>
-                        <!-- Blog entries-->
-                        <div class="col-lg-8">
-                            <div class="row" id="post-container">
-                                <?php
-                                    foreach ($recent_posts as $post) {
-                                        $post_id = $post[0];
-                                        $user_handle = $post[1];
-                                        $date = $post[2];
-                                        $post_title = $post[3];
-
-                                        // Load the blog content from the content.md file
-                                        $content_file = "data/posts/$post_id/content.md";
-                                        $post_excerpt = "No content available."; // Default if the file doesn't exist
-
-                                        if (file_exists($content_file)) {
-                                            $content = file_get_contents($content_file);
-                                            // Extract the first 300 characters or 3 sentences
-                                            $post_excerpt = substr(strip_tags($content), 0, 300); 
-                                        }
-
-                                        // Check if the post folder contains an image
-                                        $image_path = "data/posts/$post_id/image.jpg"; // or other image types like .png, etc.
-                                        if (!file_exists($image_path)) {
-                                            // If no image is found, use a default "no image" placeholder
-                                            $image_path = "assets/no-photo.jpg";
-                                        }
-
-                                        echo "
-                                        <div class='col-lg-6'>
-                                            <div class='card mb-4'>
-                                                <a href='detail.php?id=$post_id'><img class='card-img-top' src='$image_path' alt='...' /></a>
-                                                <div class='card-body'>
-                                                    <div class='small text-muted'>$date</div>
-                                                    <h2 class='card-title h4'>$post_title</h2>
-                                                    <p class='post-excerpt'>$post_excerpt</p>
-                                                    <a class='btn btn-primary' href='detail.php?id=$post_id'>Read more →</a>
-                                                </div>
-                                            </div>
-                                        </div>";
-                                    }
-                                ?>
+                        <div class="row">
+                            <!-- Blog entry-->
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <img class="card-img-top" src="<?php echo $image_path; ?>" alt="Blog image">
+                                    <div class="card-body">
+                                        <div class="small text-muted"><?php echo $date; ?></div>
+                                        <h2 class="card-title"><?php echo $post_title; ?></h2>
+                                        <p><?php echo nl2br($post_content); ?></p>
+                                    </div>
+                                    <!-- Go back button -->
+                                    <div class="card-body">
+                                        <button class="btn btn-secondary" onclick="window.history.back();">Go Back</button>
+                                    </div>
+                                </div>
                             </div>
-                            <!-- Pagination-->
-                            <nav aria-label="Pagination">
-                                <hr class="my-0" />
-                                <ul class="pagination justify-content-center my-4">
-                                    <li class="page-item"><a class="page-link" href="post.php?page=<?php echo isset($_GET['page']) ? ($_GET['page'] + 1) : 2; ?>" id="load-more">Load more</a></li>
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                 </div>
