@@ -1,3 +1,22 @@
+<?php
+// Load the most recent posts from /data/posts.csv
+$file_path = 'data/posts.csv';
+$posts = [];
+if (file_exists($file_path)) {
+    if (($file = fopen($file_path, 'r')) !== false) {
+        // Skip the header row
+        fgetcsv($file);
+        while (($data = fgetcsv($file, 1000, ',')) !== false) {
+            $posts[] = $data; // Store each post
+        }
+        fclose($file);
+    }
+}
+
+// Reverse the posts array to get the most recent posts first
+$posts = array_reverse($posts);
+$recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,7 +61,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -253,12 +272,13 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                            <div class="h5 font-weight-bold text-primary text-uppercase mb-1">Blog Title</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            <a href="#" class="btn btn-primary btn-icon-split">
+                                                <span class="icon text-white-50"></span>
+                                                <span class="text">Edit</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -271,13 +291,18 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                            <div class="h5 font-weight-bold text-success text-uppercase mb-1">Blog Title</div>
+                                            
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
+                                            <a href="#" class="btn btn-success btn-icon-split">
+                                                <span class="icon text-white-50"></span>
+                                                <span class="text">Edit</span>
+                                            </a>
+                                            <a href="#" class="btn btn-success btn-icon-split">
+                                                <span class="icon text-white-50"></span>
+                                                <span class="text">Delete</span>
+                                            </a>
+                                            
                                     </div>
                                 </div>
                             </div>
@@ -289,23 +314,13 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <div class="h5 font-weight-bold text-info text-uppercase mb-1">Blog Title</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                            <a href="#" class="btn btn-info btn-icon-split">
+                                                <span class="icon text-white-50"></span>
+                                                <span class="text">Edit</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -313,22 +328,52 @@
                         </div>
 
                         <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        <?php
+                            foreach ($recent_posts as $post) {
+                                $post_id = $post[0];
+                                $user_handle = $post[1];
+                                $date = $post[2];
+                                $post_title = $post[3]
+                                // Load the blog content from the content.md file
+                                $content_file = "data/posts/$post_id/content.md";
+                                $post_excerpt = "No content available."; // Default if the file doesn't exis
+                                if (file_exists($content_file)) {
+                                    $content = file_get_contents($content_file);
+                                    // Extract the first 300 characters or 3 sentences
+                                    $post_excerpt = substr(strip_tags($content), 0, 300); 
+                                }
+                                // Check if the post folder contains an image
+                                $image_path = "data/posts/$post_id/image.jpg"; // or other image types like .png, etc.
+                                if (!file_exists($image_path)) {
+                                    // If no image is found, use a default "no image" placeholder
+                                    $image_path = "assets/no-photo.jpg";
+                                
+                                    echo "
+                                    <div class='col-xl-3 col-md-6 mb-4'>
+                                        <div class='card border-left-warning shadow h-100 py-2'>
+                                             <div class='card-body'>
+                                                <div class='row no-gutters align-items-center'>
+                                                    <div class='col mr-2'>
+                                                        <div class='h5 font-weight-bold text-warning text-uppercase mb-1'>BloTitle</div>
+                                                    </div>
+                                                    <div class='col-auto'>
+                                                        <a href='#' class='btn btn-warning btn-icon-split'>
+                                                            <span class='icon text-white-50'></span>
+                                                            <span class='text'>Edit</span>
+                                                        </a>
+                                                        <a href='#' class='btn btn-warning btn-icon-split'>
+                                                            <span class='icon text-white-50'></span>
+                                                            <span class='text'>Edit</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                    </div>";       
+                                }    
+                            }
+                        ?>
+                        
                     </div>
 
                     <!-- Content Row -->
