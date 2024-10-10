@@ -27,7 +27,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -39,7 +39,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="post.html">
+                <a class="nav-link" href="post.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -54,14 +54,14 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="post.html">
+                <a class="nav-link" href="post.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>View Posts</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="tables.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Create Post</span></a>
             </li>
@@ -84,13 +84,13 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <a class="collapse-item" href="login.php">Login</a>
+                        <a class="collapse-item" href="register.php">Register</a>
+                        <a class="collapse-item" href="forgot-password.php">Forgot Password</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
+                        <a class="collapse-item" href="404.php">404 Page</a>
+                        <a class="collapse-item" href="blank.php">Blank Page</a>
                     </div>
                 </div>
             </li>
@@ -249,7 +249,7 @@
                                             <div class="small text-muted">January 1, 2023</div>
                                             <h2 class="card-title h4">Post Title</h2>
                                             <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis       aliquid atque, nulla.</p>
-                                            <a class="btn btn-primary" href="blog.html">Read more →</a>
+                                            <a class="btn btn-primary" href="blog.php">Read more →</a>
                                         </div>
                                     </div>
                                     <!-- Blog post-->
@@ -259,7 +259,7 @@
                                             <div class="small text-muted">January 1, 2023</div>
                                             <h2 class="card-title h4">Post Title</h2>
                                             <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis       aliquid atque, nulla.</p>
-                                            <a class="btn btn-primary" href="blog.html">Read more →</a>
+                                            <a class="btn btn-primary" href="blog.php">Read more →</a>
                                         </div>
                                     </div>
                                 </div>
@@ -271,7 +271,7 @@
                                             <div class="small text-muted">January 1, 2023</div>
                                             <h2 class="card-title h4">Post Title</h2>
                                             <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis       aliquid atque, nulla.</p>
-                                            <a class="btn btn-primary" href="blog.html">Read more →</a>
+                                            <a class="btn btn-primary" href="blog.php">Read more →</a>
                                         </div>
                                     </div>
                                     <!-- Blog post-->
@@ -281,7 +281,7 @@
                                             <div class="small text-muted">January 1, 2023</div>
                                             <h2 class="card-title h4">Post Title</h2>
                                             <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis       aliquid atque, nulla? Quos cum ex quis </p>
-                                            <a class="btn btn-primary" href="blog.html">Read more →</a>
+                                            <a class="btn btn-primary" href="blog.php">Read more →</a>
                                         </div>
                                     </div>
                                 </div>
