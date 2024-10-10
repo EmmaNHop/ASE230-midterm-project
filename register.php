@@ -9,38 +9,49 @@ $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Check if all required fields are set
-    if (isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['repeat_password'])) {
+    if (isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['repeat_password']) && isset($_POST['handle'])) {
 
-        // Read the file and check if the email already exists
-        $email_exists = false;
-        if (file_exists('data/users.csv.php')) {
-            $file = fopen('data/users.csv.php', 'r');
-            while (($line = fgetcsv($file, 0, ';')) !== false) {
-                if ($line[0] == $_POST['email']) {
-                    $email_exists = true;
-                    break;
-                }
-            }
-            fclose($file);
-        }
-
-        if ($email_exists) {
-            // Email already exists
-            $message = '<p style="color:red;text-align:center;">This email is already registered. Please use another email or <a href="login.php">login</a>.</p>';
+        // Sanitize and validate the handle
+        $handle = strtolower(trim($_POST['handle']));
+        if (strlen($handle) > 16 || !preg_match('/^[a-z0-9_]+$/i', $handle)) {
+            $message = '<p style="color:red;text-align:center;">The handle must be at most 16 characters long and can only contain letters, numbers, and underscores.</p>';
         } else {
-            // Check if passwords match
-            if ($_POST['password'] === $_POST['repeat_password']) {
-                // Open file to save user data
-                $fp = fopen('data/users.csv.php', 'a+');
-                // Save user data to file (currently without password hashing)
-                fputs($fp, $_POST['email'].';'.$_POST['password'].';'.$_POST['first_name'].';'.$_POST['last_name'].PHP_EOL);
-                fclose($fp);
-                
-                // Display success message
-                $message = '<p style="color:green;text-align:center;">Account successfully created! <a href="login.php">Click here to login</a></p>';
+            // Read the file and check if the email or handle already exists
+            $email_exists = false;
+            $handle_exists = false;
+
+            if (file_exists('data/users.csv.php')) {
+                $file = fopen('data/users.csv.php', 'r');
+                while (($line = fgetcsv($file, 0, ';')) !== false) {
+                    if (strtolower($line[0]) == strtolower($_POST['email'])) {
+                        $email_exists = true;
+                    }
+                    if (strtolower($line[4]) == $handle) { // Check handle case-insensitively
+                        $handle_exists = true;
+                    }
+                }
+                fclose($file);
+            }
+
+            if ($email_exists) {
+                $message = '<p style="color:red;text-align:center;">This email is already registered. Please use another email or <a href="login.php">login</a>.</p>';
+            } elseif ($handle_exists) {
+                $message = '<p style="color:red;text-align:center;">This handle is already taken. Please choose another handle.</p>';
             } else {
-                // Passwords do not match
-                $message = '<p style="color:red;text-align:center;">Passwords do not match. Please try again.</p>';
+                // Check if passwords match
+                if ($_POST['password'] === $_POST['repeat_password']) {
+                    // Open file to save user data
+                    $fp = fopen('data/users.csv.php', 'a+');
+                    // Save user data (email, password, first name, last name, handle)
+                    fputs($fp, $_POST['email'] . ';' . $_POST['password'] . ';' . $_POST['first_name'] . ';' . $_POST['last_name'] . ';' . $handle . PHP_EOL);
+                    fclose($fp);
+
+                    // Display success message
+                    $message = '<p style="color:green;text-align:center;">Account successfully created! <a href="login.php">Click here to login</a></p>';
+                } else {
+                    // Passwords do not match
+                    $message = '<p style="color:red;text-align:center;">Passwords do not match. Please try again.</p>';
+                }
             }
         }
     }
@@ -82,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <form class="user" method="POST" action="">
                                 <!-- Display success or error message here -->
                                 <?php echo $message; ?>
-                                
+
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="text" class="form-control form-control-user" id="exampleFirstName" name="first_name" placeholder="First Name" required>
@@ -94,6 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="form-group">
                                     <input type="email" class="form-control form-control-user" id="exampleInputEmail" name="email" placeholder="Email Address" required>
                                 </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user" id="exampleInputHandle" name="handle" placeholder="@handle" maxlength="16" required>
+                                    <small class="form-text text-muted text-center">Handle can contain letters, numbers, and underscores, and must be 16 characters or less.</small>
+                                </div>
+
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="password" class="form-control form-control-user" id="exampleInputPassword" name="password" placeholder="Password" required>
