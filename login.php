@@ -1,8 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<?php
+// Variable to store error or success message
+$message = '';
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = strtolower(trim($_POST['email']));
+        $password = trim($_POST['password']);
+        
+        // Open the users file and check for matching credentials
+        if (file_exists('data/users.csv.php')) {
+            $file = fopen('data/users.csv.php', 'r');
+            $login_success = false;
+            while (($line = fgetcsv($file, 0, ';')) !== false) {
+                // Assuming the email is in column 0 and the password is in column 1
+                if (strtolower($line[0]) == $email && $line[1] == $password) {
+                    $login_success = true;
+                    break;
+                }
+            }
+            fclose($file);
+            
+            if ($login_success) {
+                // Redirect or display success message
+                header("Location: dashboard.php"); // Redirect to the dashboard or another page
+                exit();
+            } else {
+                $message = '<p style="color:red;text-align:center;">Invalid email or password. Please try again.</p>';
+            }
+        } else {
+            $message = '<p style="color:red;text-align:center;">User data not found. Please try again.</p>';
+        }
+    } else {
+        $message = '<p style="color:red;text-align:center;">Please fill in both fields.</p>';
+    }
+}
+?>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -13,8 +50,7 @@
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
@@ -40,15 +76,18 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" method="POST" action="">
+                                        <!-- Display login error message -->
+                                        <?php echo $message; ?>
+                                        
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+                                                id="exampleInputEmail" name="email" aria-describedby="emailHelp"
+                                                placeholder="Enter Email Address..." required>
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" name="password" placeholder="Password" required>
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -57,23 +96,13 @@
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <a href="post.php" class="btn btn-primary btn-user btn-block">
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">
                                             Login
-                                        </a>
-                                        <hr>
-                                        <a href="post.php" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="post.php" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a>
+                                        </button>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.php">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register.php">Create an Account!</a>
+                                        <a class="small" href="register.php">No Account? Register Now!</a>
                                     </div>
                                 </div>
                             </div>
