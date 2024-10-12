@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['user_handle'])) {
     header("Location: login.php");
     exit();
 }
@@ -9,10 +9,10 @@ if (!isset($_SESSION['user_email'])) {
 $posts_file = 'data/posts.csv';
 $user_posts = [];
 
-if (file_exists($file_path)) {
-    $file = fopen($file_path, 'r');
+if (file_exists($posts_file)) {
+    $file = fopen($posts_file, 'r');
     while (($line = fgetcsv($file, 0, ';')) !== false) {
-        if ($line[1] == $_SESSION['user_email']) {
+        if ($line[5] == $_SESSION['user_handle']) {
             $user_posts[] = $line;
         }
     }
@@ -20,7 +20,7 @@ if (file_exists($file_path)) {
 }
 
 
-$posts = array_reverse($posts);
+$posts = array_reverse($user_posts);
 $recent_posts = array_slice($posts, 0, 10);
 ?>
 <?php include_once('header.php'); ?>       
