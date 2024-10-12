@@ -1,21 +1,27 @@
 <?php
-// Load the most recent posts from /data/posts.csv
-$file_path = 'data/posts.csv';
-$posts = [];
-if (file_exists($file_path)) {
-    if (($file = fopen($file_path, 'r')) !== false) {
-        // Skip the header row
-        fgetcsv($file);
-        while (($data = fgetcsv($file, 1000, ',')) !== false) {
-            $posts[] = $data; // Store each post
-        }
-        fclose($file);
-    }
+session_start();
+
+if (!isset($_SESSION['user_email'])) {
+    header("Location: login.php");
+    exit();
 }
 
-// Reverse the posts array to get the most recent posts first
+$posts_file = 'data/posts.csv';
+$user_posts = [];
+
+if (file_exists($file_path)) {
+    $file = fopen($file_path, 'r');
+    while (($line = fgetcsv($file, 0, ';')) !== false) {
+        if ($line[1] == $_SESSION['user_email']) {
+            $user_posts[] = $line;
+        }
+    }
+    fclose($file);
+}
+
+
 $posts = array_reverse($posts);
-$recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
+$recent_posts = array_slice($posts, 0, 10);
 ?>
 <?php include_once('header.php'); ?>       
         
