@@ -1,5 +1,14 @@
-<?php 
+<?php
+// Start the session at the very top of this file
+session_start();
+
 include_once('header.php'); 
+
+// Check if the user is logged in by verifying the session
+if (!isset($_SESSION['user_handle'])) {
+    header("Location: login.php"); // Redirect to login if not logged in
+    exit();
+}
 
 if (count($_POST) > 0) {
     // Path to the CSV file that stores post metadata
@@ -36,7 +45,7 @@ if (count($_POST) > 0) {
     }
 
     // Prepare the post data
-    $user_name = $_POST['user_name'];
+    $user_name = $_SESSION['user_handle']; // Fetch user handle from session
     $title = $_POST['title'];
     $content = $_POST['content'];
     $date = date('Y-m-d H:i:s'); // Current date and time
@@ -75,10 +84,6 @@ if (count($_POST) > 0) {
                 <div class="m-3">
                     <h2 class="card-title">Create New Post</h2>
                     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post" enctype="multipart/form-data">
-                        <div>
-                            <label>Username</label><br/>
-                            <input type="text" name="user_name" required/>
-                        </div>
                         <div>
                             <label>Title</label><br/>
                             <input type="text" name="title" required/>

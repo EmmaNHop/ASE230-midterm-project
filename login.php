@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             if ($login_success) {
                 // Redirect to the dashboard or another page
-                header("Location: dashboard.php");
+                header("Location: post.php");
                 exit();
             } else {
                 $message = '<p style="color:red;text-align:center;">Invalid email or password. Please try again.</p>';

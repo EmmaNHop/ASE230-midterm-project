@@ -9,36 +9,65 @@ if (!isset($_SESSION['user_handle'])) {
 $posts_file = 'data/posts.csv';
 $user_posts = [];
 
-// Ensure the correct index is used to match the user handle
+// Handle delete request
+if (isset($_POST['delete_post_id'])) {
+    $delete_post_id = $_POST['delete_post_id'];
+
+    // Read the posts CSV
+    $all_posts = [];
+    if (file_exists($posts_file)) {
+        $file = fopen($posts_file, 'r');
+        while (($line = fgetcsv($file, 0, ',')) !== false) {
+            $all_posts[] = $line;
+        }
+        fclose($file);
+    }
+
+    // Filter out the post with the given ID
+    $updated_posts = array_filter($all_posts, function ($post) use ($delete_post_id) {
+        return $post[0] != $delete_post_id; // Remove post by ID
+    });
+
+    // Rewrite the CSV without the deleted post
+    $file = fopen($posts_file, 'w');
+    foreach ($updated_posts as $post) {
+        fputcsv($file, $post);
+    }
+    fclose($file);
+
+    // Delete the post folder and its content (e.g., content.md, images)
+    $post_folder = "data/posts/$delete_post_id";
+    if (is_dir($post_folder)) {
+        array_map('unlink', glob("$post_folder/*.*"));
+        rmdir($post_folder); // Remove the directory itself
+    }
+
+    // Redirect to refresh the page after deleting
+    header("Location: dashboard.php");
+    exit();
+}
+
+// Retrieve user's posts
 if (file_exists($posts_file)) {
     $file = fopen($posts_file, 'r');
-    // Skip the header line in the CSV file
-    fgetcsv($file);
-    
-    // Loop through each line in the CSV
-    while (($line = fgetcsv($file, 1000, ',')) !== false) {
-        // Ensure that the line has the expected columns and check the user handle match
-        if (isset($line[1]) && trim($line[1]) === trim($_SESSION['user_handle'])) {
+    while (($line = fgetcsv($file, 0, ',')) !== false) {
+        // Ensure the line has at least 4 columns (post_id, user_handle, date, title)
+        if (count($line) >= 4 && $line[1] == $_SESSION['user_handle']) {
             $user_posts[] = $line;
         }
     }
     fclose($file);
 }
 
-// Sort posts by post ID in descending order (newest first)
-usort($user_posts, function($a, $b) {
-    return (int)$b[0] - (int)$a[0]; // Compare post IDs numerically in descending order
-});
-
-// Get all the user's posts
-$recent_posts = $user_posts;
-
+$posts = array_reverse($user_posts); // Sort by newest to oldest
+$recent_posts = array_slice($posts, 0, 10); // Limit to 10 posts
 ?>
 
 <?php include_once('header.php'); ?>
 
 <!-- Begin Page Content -->
 <div class="container-fluid">
+
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
@@ -50,11 +79,8 @@ $recent_posts = $user_posts;
 
     <!-- Content Row -->
     <div class="row">
-        <!-- Display each post for the logged-in user -->
         <?php
-        if (empty($recent_posts)) {
-            echo "<p>No posts available for this user.</p>";
-        } else {
+        if (!empty($recent_posts)) {
             foreach ($recent_posts as $post) {
                 $post_id = $post[0];
                 $user_handle = $post[1];
@@ -64,11 +90,10 @@ $recent_posts = $user_posts;
                 // Load the blog content from the content.md file
                 $content_file = "data/posts/$post_id/content.md";
                 $post_excerpt = "No content available."; // Default if the file doesn't exist
-
                 if (file_exists($content_file)) {
                     $content = file_get_contents($content_file);
-                    // Extract the first 300 characters or 3 sentences
-                    $post_excerpt = substr(strip_tags($content), 0, 300); 
+                    // Extract the first 300 characters or sentences
+                    $post_excerpt = substr(strip_tags($content), 0, 300);
                 }
 
                 // Check if the post folder contains an image
@@ -81,33 +106,40 @@ $recent_posts = $user_posts;
                 echo "
                 <div class='col-xl-3 col-md-6 mb-4'>
                     <div class='card border-left-warning shadow h-100 py-2'>
-                         <div class='card-body'>
+                        <div class='card-body'>
                             <div class='row no-gutters align-items-center'>
                                 <div class='h5 font-weight-bold text-success text-uppercase mb-1'>$post_title</div>
-                                <p class='small text-muted'>$date</p>
-                                <p class='small'>$post_excerpt</p>
+                                <div class='small text-muted mb-1'>$date</div>
+                                <p>$post_excerpt</p>
                             </div>
                             <div class='row no-gutters align-items-center'>
                                 <a href='edit_post.php?id=$post_id' class='btn btn-info btn-icon-split'>
                                     <span class='icon text-white-50'></span>
                                     <span class='text'>Edit</span>
                                 </a>
-                                <a href='delete_post.php?id=$post_id' class='btn btn-danger btn-icon-split'>
+                                <form method='post' class='d-inline'>
+                                    <input type='hidden' name='delete_post_id' value='$post_id'>
+                                    <button type='submit' class='btn btn-danger btn-icon-split' onclick='return confirm(\"Are you sure you want to delete this post?\")'>
+                                        <span class='icon text-white-50'></span>
+                                        <span class='text'>Delete</span>
+                                    </button>
+                                </form>
+                                <a href='detail.php?id=$post_id' class='btn btn-primary btn-icon-split'>
                                     <span class='icon text-white-50'></span>
-                                    <span class='text'>Delete</span>
+                                    <span class='text'>View</span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>";
             }
+        } else {
+            echo "<p>No posts available for this user.</p>";
         }
         ?>
     </div>
+
 </div>
 <!-- /.container-fluid -->
-
-<!--External JavaScript file-->
-<script src="home.js"></script>
 
 <?php include_once('footer.php'); ?>
