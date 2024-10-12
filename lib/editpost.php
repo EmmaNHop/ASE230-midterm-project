@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['user_handle'])) {
     header("Location: login.php");
     exit();
 }
@@ -21,7 +21,7 @@ $current_post = null;
 if (file_exists($posts_file)) {
     $file = fopen($posts_file, 'r');
     while (($line = fgetcsv($file, 0, ';')) !== false) {
-        if ($line[0] == $post_id && $line[1] == $_SESSION['user_email']) {
+        if ($line[0] == $post_id && $line[5] == $_SESSION['user_handle']) {
             $current_post = $line;
             break;
         }
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (file_exists($posts_file)) {
             $file = fopen($posts_file, 'r');
             while (($line = fgetcsv($file, 0, ';')) !== false) {
-                if ($line[0] == $post_id && $line[1] == $_SESSION['user_email']) {
+                if ($line[0] == $post_id && $line[5] == $_SESSION['user_handle']) {
                     $line[3] = $new_title;
                 }
                 $updated_posts[] = $line;
