@@ -12,7 +12,7 @@ $user_posts = [];
 if (file_exists($posts_file)) {
     $file = fopen($posts_file, 'r');
     while (($line = fgetcsv($file, 0, ';')) !== false) {
-        if ($line[1] == $_SESSION['user_handle']) {
+        if ($line[5] == $_SESSION['user_handle']) {
             $user_posts[] = $line;
         }
     }
