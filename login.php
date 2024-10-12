@@ -11,16 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = strtolower(trim($_POST['email']));
         $password = trim($_POST['password']);
         
-        // Open the users file and check for matching credentials
         if (file_exists('data/users.csv.php')) {
             $file = fopen('data/users.csv.php', 'r');
             $login_success = false;
             while (($line = fgetcsv($file, 0, ';')) !== false) {
-                // Assuming the email is in column 0 and the password is in column 1
                 if (strtolower($line[0]) == $email && $line[1] == $password) {
                     $login_success = true;
 
-                    $_SESSION['user_email'] = $email;
+                    $_SESSION['user_handle'] = $handle;
                     break;
                 }
             }
