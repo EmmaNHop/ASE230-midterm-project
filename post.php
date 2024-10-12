@@ -63,7 +63,7 @@ $recent_posts = array_slice($posts, $offset, $posts_per_page); // Get the 10 mos
                 <div class='card mb-4'>
                     <a href='detail.php?id=$post_id'><img class='card-img-top' src='$image_path' alt='...' /></a>
                     <div class='card-body'>
-                        <div class='small text-muted'>$date</div>
+                        <div class='small text-muted'>By @$user_handle on $date</div> <!-- Display @handle -->
                         <h2 class='card-title h4'>$post_title</h2>
                         <p class='post-excerpt'>$post_excerpt</p>
                         <a class='btn btn-primary' href='detail.php?id=$post_id'>Read more →</a>

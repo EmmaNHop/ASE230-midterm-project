@@ -139,6 +139,8 @@ $recent_posts = array_slice($posts, 0, 10); // Limit to 10 posts
         ?>
     </div>
 
+    <li class="page-item"><a class="page-link" href="post.php?page=<?php echo $page + 1; ?>">Load more</a></li>
+
 </div>
 <!-- /.container-fluid -->
 

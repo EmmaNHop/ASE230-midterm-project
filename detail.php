@@ -83,7 +83,7 @@ if (!file_exists($image_path)) {
             <div class="card mb-4">
                 <img class="card-img-top" src="<?php echo $image_path; ?>" alt="Blog image">
                 <div class="card-body">
-                    <div class="small text-muted"><?php echo $date; ?></div>
+                    <div class="small text-muted">By @<?php echo $user_handle; ?> on <?php echo $date; ?></div> <!-- Display @handle -->
                     <h2 class="card-title"><?php echo $post_title; ?></h2>
                     <!-- Output parsed markdown content as HTML -->
                     <p><?php echo $post_content_html; ?></p>
