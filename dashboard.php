@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['user_handle'])) {
     header("Location: login.php");
     exit();
 }
@@ -12,7 +12,7 @@ $user_posts = [];
 if (file_exists($posts_file)) {
     $file = fopen($posts_file, 'r');
     while (($line = fgetcsv($file, 0, ';')) !== false) {
-        if ($line[1] == $_SESSION['user_email']) {
+        if ($line[1] == $_SESSION['user_handle']) {
             $user_posts[] = $line;
         }
     }
