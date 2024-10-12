@@ -2,6 +2,7 @@
 <html lang="en">
 
 <?php
+session_start();
 // Variable to store error or success message
 $message = '';
 
@@ -18,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Assuming the email is in column 0 and the password is in column 1
                 if (strtolower($line[0]) == $email && $line[1] == $password) {
                     $login_success = true;
+
+                    $_SESSION['user_email'] = $email;
                     break;
                 }
             }
@@ -27,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Redirect or display success message
                 header("Location: dashboard.php"); // Redirect to the dashboard or another page
                 exit();
+
             } else {
                 $message = '<p style="color:red;text-align:center;">Invalid email or password. Please try again.</p>';
             }
