@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Check if the email matches and password matches
                 if (strtolower($line[0]) == $email && $line[1] == $password) {
                     $login_success = true;
-                    $handle = $line[5];
+                    $handle = $line[4]; // Assuming the user handle is in column 4 (index 3)
                     
                     // Set the session variable with the user's handle
                     $_SESSION['user_handle'] = $handle;
