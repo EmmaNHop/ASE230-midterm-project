@@ -9,8 +9,8 @@ if (!isset($_SESSION['user_email'])) {
 $posts_file = 'data/posts.csv';
 $user_posts = [];
 
-if (file_exists($file_path)) {
-    $file = fopen($file_path, 'r');
+if (file_exists($posts_file)) {
+    $file = fopen($posts_file, 'r');
     while (($line = fgetcsv($file, 0, ';')) !== false) {
         if ($line[1] == $_SESSION['user_email']) {
             $user_posts[] = $line;
@@ -20,7 +20,7 @@ if (file_exists($file_path)) {
 }
 
 
-$posts = array_reverse($posts);
+$posts = array_reverse($user_posts);
 $recent_posts = array_slice($posts, 0, 10);
 ?>
 <?php include_once('header.php'); ?>       
