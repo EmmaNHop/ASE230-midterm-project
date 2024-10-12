@@ -28,11 +28,11 @@ include_once('header.php');
                         </div>
                         <div>
                             <label>Date</label><br/>
-                            <input type = "date" name = "date" required/>
+                            <input type = "date" name = "date"/>
                         </div>
                         <div>
                             <label>Title</label><br/>
-                            <input type = "text" name = "title"/>
+                            <input type = "text" name = "title" required/>
                         </div>
                         <div>
                             <label>Image</label><br/>
