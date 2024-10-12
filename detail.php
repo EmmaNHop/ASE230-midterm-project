@@ -1,4 +1,7 @@
 <?php
+// Include Parsedown to parse markdown content
+include_once('lib/Parsedown.php'); // Make sure the path is correct
+
 // Check if the 'id' parameter is provided in the URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     // Redirect to post.php if no ID is provided
@@ -58,6 +61,10 @@ if (file_exists($content_file)) {
     $post_content = "Content not available for this post.";
 }
 
+// Parse the markdown content into HTML using Parsedown
+$Parsedown = new Parsedown();
+$post_content_html = $Parsedown->text($post_content); // Convert markdown to HTML
+
 // Check if the post folder contains an image
 $image_path = "data/posts/$post_id/image.jpg"; // or other image types like .png, etc.
 if (!file_exists($image_path)) {
@@ -68,26 +75,26 @@ if (!file_exists($image_path)) {
 
 <?php include_once('header.php'); ?>
 
-                    <!-- Page content-->
-                    <div class="container">
-                        <div class="row">
-                            <!-- Blog entry-->
-                            <div class="col-lg-8">
-                                <div class="card mb-4">
-                                    <img class="card-img-top" src="<?php echo $image_path; ?>" alt="Blog image">
-                                    <div class="card-body">
-                                        <div class="small text-muted"><?php echo $date; ?></div>
-                                        <h2 class="card-title"><?php echo $post_title; ?></h2>
-                                        <p><?php echo nl2br($post_content); ?></p>
-                                    </div>
-                                    <!-- Go back button -->
-                                    <div class="card-body">
-                                        <button class="btn btn-secondary" onclick="window.history.back();">Go Back</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!-- Page content-->
+<div class="container">
+    <div class="row">
+        <!-- Blog entry-->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <img class="card-img-top" src="<?php echo $image_path; ?>" alt="Blog image">
+                <div class="card-body">
+                    <div class="small text-muted"><?php echo $date; ?></div>
+                    <h2 class="card-title"><?php echo $post_title; ?></h2>
+                    <!-- Output parsed markdown content as HTML -->
+                    <p><?php echo $post_content_html; ?></p>
                 </div>
+                <!-- Go back button -->
+                <div class="card-body">
+                    <button class="btn btn-secondary" onclick="window.history.back();">Go Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include_once('footer.php'); ?>
