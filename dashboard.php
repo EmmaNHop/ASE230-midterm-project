@@ -1,6 +1,6 @@
 <?php
 // Load the most recent posts from /data/posts.csv
-$file_path = 'data/posts.csv';
+$file_path = 'data/data.json';
 $posts = [];
 if (file_exists($file_path)) {
     if (($file = fopen($file_path, 'r')) !== false) {
@@ -39,7 +39,7 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
                         <?php
                             foreach ($recent_posts as $post) {
                                 $post_id = $post[0];
-                                $user_handle = $post[1];
+                                $username = $post[1];
                                 $date = $post[2];
                                 $post_title = $post[3];
                                 // Load the blog content from the content.md file
@@ -51,7 +51,7 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
                                     $post_excerpt = substr(strip_tags($content), 0, 300); 
                                 }
                                 // Check if the post folder contains an image
-                                $image_path = "data/posts/$post_id/image.jpg"; // or other image types like .png, etc.
+                                $image_path = "data/images/$image"; // or other image types like .png, etc.
                                 if (!file_exists($image_path)) {
                                     // If no image is found, use a default "no image" placeholder
                                     $image_path = "assets/no-photo.jpg";
