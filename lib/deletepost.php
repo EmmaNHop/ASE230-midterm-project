@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['user_handle'])) {
     header("Location: login.php");
     exit();
 }
@@ -20,7 +20,7 @@ if (file_exists($posts_file)) {
     $file = fopen($posts_file, 'r');
     $updated_posts = [];
     while (($line = fgetcsv($file, 0, ';')) !== false) {
-        if ($line[0] == $post_id && $line[1] == $_SESSION['user_email']) {
+        if ($line[0] == $post_id && $line[5] == $_SESSION['user_handle']) {
             $post_found = true; 
             continue;
         }
