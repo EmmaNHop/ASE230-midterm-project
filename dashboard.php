@@ -88,7 +88,6 @@ $recent_posts = array_slice($posts, 0, 10); // Get the 10 most recent posts
                          
 
                 <div>
-            
                 <br> 
                 <br> 
 

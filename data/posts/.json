@@ -1,0 +1,19 @@
+{
+    "blogs": [
+        {
+            "post-id": 1,
+            "username": "John Doe",
+            "date": "2021-01-01",
+            "title": "My first blog post",
+            "image": "\/assets\/images\/download.jpg",
+            "blog": "This is my first blog post. I hope you enjoy it."
+        }
+    ],
+    "0": {
+        "user_name": "saedrf",
+        "date": "2024-10-11",
+        "title": "awer",
+        "image": "",
+        "content": "awer"
+    }
+}
