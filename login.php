@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <?php
 session_start();
 // Variable to store error or success message
@@ -15,9 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $file = fopen('data/users.csv.php', 'r');
             $login_success = false;
             while (($line = fgetcsv($file, 0, ';')) !== false) {
+                // Check if the email matches and password matches
                 if (strtolower($line[0]) == $email && $line[1] == $password) {
                     $login_success = true;
-
+                    $handle = $line[5];
+                    
+                    // Set the session variable with the user's handle
                     $_SESSION['user_handle'] = $handle;
                     break;
                 }
@@ -25,10 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             fclose($file);
             
             if ($login_success) {
-                // Redirect or display success message
-                header("Location: dashboard.php"); // Redirect to the dashboard or another page
+                // Redirect to the dashboard or another page
+                header("Location: dashboard.php");
                 exit();
-
             } else {
                 $message = '<p style="color:red;text-align:center;">Invalid email or password. Please try again.</p>';
             }
